@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EventIQ - Smart Symposium Crowd Management System</title>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+  <!-- BACKGROUND ANIMATED GLOWS -->
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+  <div class="bg-glow bg-glow-3"></div>
+
+  <!-- AUTHENTICATION PAGES (LOGIN / SIGNUP) -->
+  <div id="auth-container" class="auth-container">
+    <!-- LOGIN VIEW -->
+    <div id="login-card" class="auth-card active-view">
+      <div class="auth-header">
+        <div class="logo-icon-container">
+          <i data-lucide="shield-alert" class="logo-icon text-cyan"></i>
+        </div>
+        <h2>Welcome Back</h2>
+        <p>Login to manage symposium crowd analytics</p>
+      </div>
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="login-email"><i data-lucide="mail"></i> Email Address</label>
+          <input type="email" id="login-email" placeholder="organizer@college.edu" required>
+        </div>
+        <div class="form-group">
+          <label for="login-password"><i data-lucide="lock"></i> Password</label>
+          <div class="password-input-container">
+            <input type="password" id="login-password" placeholder="••••••••" required>
+            <button type="button" class="password-toggle-btn" id="login-password-toggle" title="Toggle password visibility">
+              <i data-lucide="eye"></i>
+            </button>
+          </div>
+        </div>
+        <div class="auth-options">
+          <label class="checkbox-container">
+            <input type="checkbox" id="login-remember" checked>
+            <span class="checkmark"></span> Remember me
+          </label>
+          <a href="#" class="forgot-pass-link">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">
+          <span>Sign In</span> <i data-lucide="arrow-right"></i>
+        </button>
+      </form>
+      <div class="auth-footer">
+        <p>New to the platform? <a href="#" id="to-signup-link">Create an account</a></p>
+      </div>
+    </div>
+
+    <!-- SIGNUP VIEW -->
+    <div id="signup-card" class="auth-card hidden">
+      <div class="auth-header">
+        <div class="logo-icon-container">
+          <i data-lucide="user-plus" class="logo-icon text-emerald"></i>
+        </div>
+        <h2>Create Account</h2>
+        <p>Register as an event administrator</p>
+      </div>
+      <form id="signup-form" class="auth-form">
+        <div class="form-group">
+          <label for="signup-name"><i data-lucide="user"></i> Full Name</label>
+          <input type="text" id="signup-name" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+          <label for="signup-email"><i data-lucide="mail"></i> Email Address</label>
+          <input type="email" id="signup-email" placeholder="johndoe@college.edu" required>
+        </div>
+        <div class="form-group">
+          <label for="signup-password"><i data-lucide="lock"></i> Password</label>
+          <div class="password-input-container">
+            <input type="password" id="signup-password" placeholder="Min. 8 characters" minlength="8" required>
+            <button type="button" class="password-toggle-btn" id="signup-password-toggle" title="Toggle password visibility">
+              <i data-lucide="eye"></i>
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="checkbox-container">
+            <input type="checkbox" id="signup-agree" required>
+            <span class="checkmark"></span> I agree to the terms of service and safety guidelines
+          </label>
+        </div>
+        <button type="submit" class="btn btn-emerald btn-block">
+          <span>Create Account</span> <i data-lucide="user-check"></i>
+        </button>
+      </form>
+      <div class="auth-footer">
+        <p>Already have an account? <a href="#" id="to-login-link">Sign In here</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN APP DASHBOARD STRUCTURE (HIDDEN UNTIL AUTHENTICATED) -->
+  <div id="app-container" class="app-container hidden">
+    <!-- SIDE NAV BAR -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-logo">
+          <i data-lucide="activity" class="text-cyan animate-pulse"></i>
+        </div>
+        <div class="brand-details">
+          <h3>EventIQ</h3>
+          <span>YOLOv8 Analytics</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-menu">
+        <ul>
+          <li>
+            <a href="#" class="nav-item active" data-page="dashboard">
+              <i data-lucide="layout-dashboard"></i> <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-page="analytics">
+              <i data-lucide="trending-up"></i> <span>Analytics</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-page="routing">
+              <i data-lucide="map"></i> <span>Route Suggestions</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-page="settings">
+              <i data-lucide="settings"></i> <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-user">
+        <div class="user-avatar" id="user-initials">AD</div>
+        <div class="user-info">
+          <h4 id="user-display-name">Admin Organizer</h4>
+          <span id="user-display-email">admin@college.edu</span>
+        </div>
+        <button class="logout-btn" id="logout-btn" title="Logout">
+          <i data-lucide="log-out"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN VIEW CONTAINER -->
+    <main class="main-content">
+      <!-- TOP NAVIGATION BAR -->
+      <header class="top-nav">
+        <div class="header-title">
+          <h1 id="page-title">Crowd Density Overview</h1>
+          <p id="page-subtitle">Real-time object detection and safety monitoring</p>
+        </div>
+        
+        <div class="header-actions">
+          <!-- Connection Status Badge -->
+          <div class="status-indicator-badge warning-glow" id="connection-status-badge">
+            <span class="status-dot warning-bg"></span>
+            <span class="status-text" id="status-mode-label">Simulation Mode</span>
+          </div>
+
+          <!-- Quick Notifications Icon -->
+          <div class="notification-bell-container" id="bell-toggle">
+            <button class="icon-btn">
+              <i data-lucide="bell"></i>
+              <span class="notification-badge" id="bell-badge-count">0</span>
+            </button>
+            <div class="notification-dropdown" id="notification-dropdown">
+              <div class="dropdown-header">
+                <h4>System Alerts</h4>
+                <button id="clear-notifications-btn">Clear All</button>
+              </div>
+              <div class="dropdown-list" id="dropdown-list">
+                <div class="empty-notifications">
+                  <i data-lucide="bell-off"></i>
+                  <p>No active alerts. Venue is secure.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- PAGE: DASHBOARD VIEW -->
+      <section id="dashboard-page" class="app-page active-page">
+        <!-- TOP TOTAL STATS GRID -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon-wrapper cyan-bg-trans text-cyan">
+              <i data-lucide="users"></i>
+            </div>
+            <div class="stat-info">
+              <span>Total Symposium Count</span>
+              <h2 id="total-occupant-count">0</h2>
+            </div>
+            <div class="stat-trend positive">
+              <i data-lucide="arrow-up-right"></i> +12% this hour
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper amber-bg-trans text-amber">
+              <i data-lucide="alert-triangle"></i>
+            </div>
+            <div class="stat-info">
+              <span>Active Congestions</span>
+              <h2 id="congested-zone-count">0</h2>
+            </div>
+            <div class="stat-trend negative" id="congestion-trend">
+              Safe levels
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper emerald-bg-trans text-emerald">
+              <i data-lucide="sparkles"></i>
+            </div>
+            <div class="stat-info">
+              <span>Average Density</span>
+              <h2 id="average-density-percentage">0%</h2>
+            </div>
+            <div class="stat-trend positive">
+              <i data-lucide="check-circle"></i> Flow stable
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper purple-bg-trans text-purple">
+              <i data-lucide="video"></i>
+            </div>
+            <div class="stat-info">
+              <span>YOLOv8 Pipelines</span>
+              <h2>4 Active</h2>
+            </div>
+            <div class="stat-trend positive">
+              <i data-lucide="shield-check"></i> 100% online
+            </div>
+          </div>
+        </div>
+
+        <!-- MAIN STREAM AND ZONES GRID -->
+        <div class="dashboard-layout">
+          <!-- YOLOv8 Live Feed Screen -->
+          <div class="dashboard-panel stream-panel">
+            <div class="panel-header">
+              <div class="header-left">
+                <span class="live-dot-indicator animate-pulse"></span>
+                <h3>YOLOv8 Real-time Inference Stream</h3>
+              </div>
+              <div class="header-right">
+                <select id="camera-select" class="custom-select">
+                  <option value="auditorium">Cam-01: Main Auditorium</option>
+                  <option value="registration">Cam-02: Registration Entrance</option>
+                  <option value="seminar">Cam-03: Seminar Hall-A</option>
+                  <option value="foodcourt">Cam-04: Food Court Plaza</option>
+                </select>
+                <button id="reconnect-backend-btn" class="btn btn-secondary btn-sm" title="Toggle Live backend / Simulation">
+                  <i data-lucide="refresh-cw"></i> <span>Live Mode</span>
+                </button>
+              </div>
+            </div>
+            
+            <div class="panel-body stream-container">
+              <!-- Simulated Canvas -->
+              <canvas id="simulated-stream-canvas" width="640" height="360" class="stream-canvas"></canvas>
+              <!-- Live Video Element when Backend is attached -->
+              <img id="live-backend-img" src="" alt="Real-time Stream" class="stream-img hidden">
+              
+              <!-- Screen Overlays -->
+              <div class="stream-watermark">
+                <span>EVENTIQ DEEP INFERENCE PIPELINE</span>
+              </div>
+              
+              <div class="stream-metrics-overlay">
+                <div class="metric-item">
+                  <span class="label">MODEL</span>
+                  <span class="value text-cyan">YOLOv8 Nano</span>
+                </div>
+                <div class="metric-item">
+                  <span class="label">SPEED</span>
+                  <span class="value" id="yolo-latency">12.4ms</span>
+                </div>
+                <div class="metric-item">
+                  <span class="label">FPS</span>
+                  <span class="value text-emerald" id="yolo-fps">29.4</span>
+                </div>
+                <div class="metric-item">
+                  <span class="label">COUNT</span>
+                  <span class="value text-cyan" id="yolo-stream-count">0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alert Logs Panel -->
+          <div class="dashboard-panel alert-panel">
+            <div class="panel-header">
+              <h3>Real-Time Crowd Alert Log</h3>
+              <i data-lucide="bell-ring" class="text-rose animate-bounce"></i>
+            </div>
+            <div class="panel-body">
+              <div class="alert-feed-container" id="alert-feed">
+                <!-- Alerts are added programmatically here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ZONE DENSITY STATS CARDS -->
+        <h3 class="section-title"><i data-lucide="map-pin"></i> Venue Zones Status</h3>
+        <div class="zones-grid" id="zones-container">
+          <!-- Auditorium Card -->
+          <div class="zone-card" id="zone-card-auditorium">
+            <div class="zone-card-header">
+              <h4>Main Auditorium</h4>
+              <span class="badge badge-success" id="zone-badge-auditorium">Normal</span>
+            </div>
+            <div class="zone-card-body">
+              <div class="zone-metric">
+                <div class="metric-block">
+                  <span class="metric-label">Occupancy</span>
+                  <span class="metric-val"><b id="zone-count-auditorium">0</b> / <span id="zone-cap-auditorium">150</span></span>
+                </div>
+                <div class="metric-block align-right">
+                  <span class="metric-label">Ratio</span>
+                  <span class="metric-val text-cyan" id="zone-ratio-auditorium">0%</span>
+                </div>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill progress-cyan" id="zone-progress-auditorium" style="width: 0%"></div>
+              </div>
+              <div class="zone-card-footer">
+                <span>Threshold: <b id="zone-thresh-auditorium">80%</b></span>
+                <span class="text-muted"><i data-lucide="shield-check"></i> High Priority</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Registration Card -->
+          <div class="zone-card" id="zone-card-registration">
+            <div class="zone-card-header">
+              <h4>Registration Hall</h4>
+              <span class="badge badge-success" id="zone-badge-registration">Normal</span>
+            </div>
+            <div class="zone-card-body">
+              <div class="zone-metric">
+                <div class="metric-block">
+                  <span class="metric-label">Occupancy</span>
+                  <span class="metric-val"><b id="zone-count-registration">0</b> / <span id="zone-cap-registration">80</span></span>
+                </div>
+                <div class="metric-block align-right">
+                  <span class="metric-label">Ratio</span>
+                  <span class="metric-val text-cyan" id="zone-ratio-registration">0%</span>
+                </div>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill progress-cyan" id="zone-progress-registration" style="width: 0%"></div>
+              </div>
+              <div class="zone-card-footer">
+                <span>Threshold: <b id="zone-thresh-registration">75%</b></span>
+                <span class="text-muted"><i data-lucide="activity"></i> Entry Gates</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Seminar Hall-A Card -->
+          <div class="zone-card" id="zone-card-seminar">
+            <div class="zone-card-header">
+              <h4>Seminar Hall-A</h4>
+              <span class="badge badge-success" id="zone-badge-seminar">Normal</span>
+            </div>
+            <div class="zone-card-body">
+              <div class="zone-metric">
+                <div class="metric-block">
+                  <span class="metric-label">Occupancy</span>
+                  <span class="metric-val"><b id="zone-count-seminar">0</b> / <span id="zone-cap-seminar">60</span></span>
+                </div>
+                <div class="metric-block align-right">
+                  <span class="metric-label">Ratio</span>
+                  <span class="metric-val text-cyan" id="zone-ratio-seminar">0%</span>
+                </div>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill progress-cyan" id="zone-progress-seminar" style="width: 0%"></div>
+              </div>
+              <div class="zone-card-footer">
+                <span>Threshold: <b id="zone-thresh-seminar">85%</b></span>
+                <span class="text-muted"><i data-lucide="shield-check"></i> Standard View</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Food Court Plaza Card -->
+          <div class="zone-card" id="zone-card-foodcourt">
+            <div class="zone-card-header">
+              <h4>Food Court Plaza</h4>
+              <span class="badge badge-success" id="zone-badge-foodcourt">Normal</span>
+            </div>
+            <div class="zone-card-body">
+              <div class="zone-metric">
+                <div class="metric-block">
+                  <span class="metric-label">Occupancy</span>
+                  <span class="metric-val"><b id="zone-count-foodcourt">0</b> / <span id="zone-cap-foodcourt">100</span></span>
+                </div>
+                <div class="metric-block align-right">
+                  <span class="metric-label">Ratio</span>
+                  <span class="metric-val text-cyan" id="zone-ratio-foodcourt">0%</span>
+                </div>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill progress-cyan" id="zone-progress-foodcourt" style="width: 0%"></div>
+              </div>
+              <div class="zone-card-footer">
+                <span>Threshold: <b id="zone-thresh-foodcourt">70%</b></span>
+                <span class="text-muted"><i data-lucide="activity"></i> Dining Zone</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE: ANALYTICS VIEW -->
+      <section id="analytics-page" class="app-page hidden">
+        <!-- Historical Highlights Row -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon-wrapper purple-bg-trans text-purple">
+              <i data-lucide="clock"></i>
+            </div>
+            <div class="stat-info">
+              <span>Peak Crowd Hour</span>
+              <h2>02:30 PM</h2>
+            </div>
+            <div class="stat-trend alert-amber">
+              <i data-lucide="info"></i> During Lunch Break
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper emerald-bg-trans text-emerald">
+              <i data-lucide="users"></i>
+            </div>
+            <div class="stat-info">
+              <span>Cumulative Visitors</span>
+              <h2 id="analytics-cumulative-visitors">1,482</h2>
+            </div>
+            <div class="stat-trend positive">
+              <i data-lucide="trending-up"></i> Total registrations
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper cyan-bg-trans text-cyan">
+              <i data-lucide="route"></i>
+            </div>
+            <div class="stat-info">
+              <span>Redirect Count</span>
+              <h2>34 Route Suggests</h2>
+            </div>
+            <div class="stat-trend positive">
+              <i data-lucide="check-circle"></i> Congestion avoided
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper rose-bg-trans text-rose">
+              <i data-lucide="shield-alert"></i>
+            </div>
+            <div class="stat-info">
+              <span>Critical Incidents</span>
+              <h2 id="analytics-critical-count">0</h2>
+            </div>
+            <div class="stat-trend positive">
+              <i data-lucide="smile"></i> 100% Resolved
+            </div>
+          </div>
+        </div>
+
+        <div class="analytics-layout">
+          <!-- Hourly Chart -->
+          <div class="dashboard-panel chart-panel">
+            <div class="panel-header">
+              <h3>Symposium Occupancy Heat & Flow (Hourly Trend)</h3>
+              <div class="header-right">
+                <button class="btn btn-secondary btn-sm" id="btn-chart-refresh">
+                  <i data-lucide="refresh-cw"></i> Refresh Data
+                </button>
+              </div>
+            </div>
+            <div class="panel-body chart-container-div">
+              <canvas id="occupancy-flow-chart"></canvas>
+            </div>
+          </div>
+
+          <!-- Zone Utilization Comparison -->
+          <div class="dashboard-panel chart-panel">
+            <div class="panel-header">
+              <h3>Zone Capacity VS Current Count Dilation</h3>
+            </div>
+            <div class="panel-body chart-container-div">
+              <canvas id="zone-utilization-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE: ROUTE SUGGESTION VIEW -->
+      <section id="routing-page" class="app-page hidden">
+        <div class="routing-layout">
+          <!-- Interactive Map panel -->
+          <div class="dashboard-panel map-panel">
+            <div class="panel-header">
+              <div class="header-left">
+                <i data-lucide="map" class="text-cyan"></i>
+                <h3>Symposium Interactive Smart Route Map</h3>
+              </div>
+              <div class="header-right">
+                <button id="btn-toggle-demo-congestion" class="btn btn-secondary btn-sm">
+                  <span>Toggle Demo Congestion</span>
+                </button>
+              </div>
+            </div>
+            <div class="panel-body map-container">
+              <!-- SVG College Floor Plan -->
+              <svg id="symposium-floorplan" viewBox="0 0 800 500" class="floorplan-svg">
+                <!-- Background Grid -->
+                <defs>
+                  <pattern id="grid-pattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1"/>
+                  </pattern>
+                  <!-- Glowing Filters for Lights -->
+                  <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="8" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                  <filter id="glow-rose" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="10" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                  <filter id="glow-emerald" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="6" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+
+                <!-- Floor Outer Boundary Walls -->
+                <rect x="20" y="20" width="760" height="460" rx="15" fill="none" stroke="rgba(255, 255, 255, 0.1)" stroke-width="2" />
+                
+                <!-- Main Hallways/Corridors Background Paths -->
+                <g id="hallways" opacity="0.3">
+                  <!-- Main Corridor Loop -->
+                  <rect x="180" y="180" width="440" height="140" rx="10" fill="none" stroke="#334155" stroke-width="24" stroke-linecap="round" />
+                  <!-- Access halls -->
+                  <line x1="100" y1="250" x2="180" y2="250" stroke="#334155" stroke-width="24" />
+                  <line x1="700" y1="250" x2="620" y2="250" stroke="#334155" stroke-width="24" />
+                  <line x1="400" y1="80" x2="400" y2="180" stroke="#334155" stroke-width="24" />
+                  <line x1="400" y1="320" x2="400" y2="420" stroke="#334155" stroke-width="24" />
+                </g>
+
+                <!-- Zone Layouts (Auditorium, Seminar, Food, Registration) -->
+                <!-- 1. MAIN ENTRANCE & REGISTRATION (Left Area) -->
+                <g id="map-zone-registration" class="map-zone">
+                  <rect x="50" y="190" width="130" height="120" rx="8" class="zone-rect status-normal-fill" />
+                  <text x="115" y="245" class="zone-label">Registration</text>
+                  <text x="115" y="270" class="zone-status-text text-emerald" id="map-status-val-registration">Safe</text>
+                </g>
+
+                <!-- 2. MAIN AUDITORIUM (Top Area) -->
+                <g id="map-zone-auditorium" class="map-zone">
+                  <rect x="280" y="30" width="240" height="130" rx="8" class="zone-rect status-normal-fill" />
+                  <text x="400" y="90" class="zone-label font-title">Main Auditorium</text>
+                  <text x="400" y="120" class="zone-status-text text-emerald" id="map-status-val-auditorium">Safe</text>
+                </g>
+
+                <!-- 3. SEMINAR HALL A (Bottom Right) -->
+                <g id="map-zone-seminar" class="map-zone">
+                  <rect x="520" y="320" width="220" height="130" rx="8" class="zone-rect status-normal-fill" />
+                  <text x="630" y="380" class="zone-label">Seminar Hall-A</text>
+                  <text x="630" y="410" class="zone-status-text text-emerald" id="map-status-val-seminar">Safe</text>
+                </g>
+
+                <!-- 4. FOOD COURT PLAZA (Bottom Left) -->
+                <g id="map-zone-foodcourt" class="map-zone">
+                  <rect x="60" y="320" width="220" height="130" rx="8" class="zone-rect status-normal-fill" />
+                  <text x="170" y="380" class="zone-label">Food Court Plaza</text>
+                  <text x="170" y="410" class="zone-status-text text-emerald" id="map-status-val-foodcourt">Safe</text>
+                </g>
+
+                <!-- 5. CENTRAL INFO HUB (Static central node) -->
+                <g id="map-zone-center" class="map-zone-static">
+                  <rect x="340" y="215" width="120" height="70" rx="10" fill="rgba(15, 23, 42, 0.9)" stroke="rgba(255, 255, 255, 0.15)" stroke-width="2" />
+                  <text x="400" y="250" class="zone-label" style="font-size: 11px; fill: rgba(255,255,255,0.7);">Central Plaza</text>
+                  <circle cx="400" cy="270" r="4" fill="#06b6d4" filter="url(#glow-cyan)"/>
+                </g>
+
+                <!-- PATHWAY ROUTE PATHS (RENDERED OVER HALLWAYS) -->
+                <!-- Normal Recommended Route Path -->
+                <g id="route-path-normal" class="routing-path active-path">
+                  <!-- Path: Registration -> Central Corridor -> Auditorium -->
+                  <path id="path-reg-to-aud" d="M 180 250 L 400 250 L 400 160" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" class="dash-flow" />
+                  <!-- Path: Registration -> Central Corridor -> Seminar Hall -->
+                  <path id="path-reg-to-sem" d="M 180 250 L 400 250 L 400 385 M 400 385 L 520 385" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" class="dash-flow" />
+                  <!-- Path: Registration -> Food Court -->
+                  <path id="path-reg-to-food" d="M 180 250 L 180 320" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round" />
+                </g>
+
+                <!-- Alternative Bypass Route Path (Active when congestion is present) -->
+                <g id="route-path-alternative" class="routing-path hidden">
+                  <!-- Bypass Path: Registration -> Bypass Hallway -> Seminar Hall avoiding central corridor -->
+                  <!-- Draws a glowing orange/purple route bypassing Central Plaza -->
+                  <path id="path-bypass-sem" d="M 180 250 C 180 130, 280 95, 280 95 M 180 250 L 180 320 M 180 385 L 520 385" fill="none" stroke="#06b6d4" stroke-width="6" stroke-dasharray="10 5" stroke-linecap="round" stroke-linejoin="round" class="dash-flow-fast" filter="url(#glow-cyan)"/>
+                </g>
+
+                <!-- Map Legend -->
+                <g transform="translate(620, 30)" class="map-legend">
+                  <rect x="0" y="0" width="130" height="90" rx="5" fill="rgba(10, 15, 30, 0.85)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+                  <circle cx="15" cy="20" r="5" fill="#10b981" />
+                  <text x="28" y="24" fill="#94a3b8" style="font-size: 10px;">Clear Path</text>
+                  
+                  <circle cx="15" cy="45" r="5" fill="#f59e0b" />
+                  <text x="28" y="49" fill="#94a3b8" style="font-size: 10px;">Moderate Flow</text>
+
+                  <circle cx="15" cy="70" r="5" fill="#f43f5e" />
+                  <text x="28" y="74" fill="#94a3b8" style="font-size: 10px;">Congested (Avoid)</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Suggestions instructions panel -->
+          <div class="dashboard-panel directions-panel">
+            <div class="panel-header">
+              <h3>Route Guidance Console</h3>
+            </div>
+            <div class="panel-body">
+              <div id="routing-state-display" class="routing-state-info normal-state">
+                <div class="status-title-row">
+                  <i data-lucide="check-circle" class="status-icon text-emerald"></i>
+                  <h4 id="routing-status-title">Symposium Access Clean</h4>
+                </div>
+                <p id="routing-status-desc">All core pathways and access links are operating below crowd limits. Standard corridors are safe to use.</p>
+              </div>
+
+              <div class="directions-list-wrapper">
+                <h4>Suggested Crowd Flow Directions</h4>
+                <div class="direction-steps" id="direction-steps-container">
+                  <!-- Populated in JS based on congestion state -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PAGE: SETTINGS VIEW -->
+      <section id="settings-page" class="app-page hidden">
+        <div class="settings-layout">
+          <!-- Threshold settings panel -->
+          <div class="dashboard-panel settings-card">
+            <div class="panel-header">
+              <h3>Zone Threshold Configuration</h3>
+            </div>
+            <div class="panel-body">
+              <form id="thresholds-form">
+                <div class="setting-row">
+                  <div class="setting-desc">
+                    <label>Main Auditorium Capacity</label>
+                    <span>Maximum occupants and critical density alert trigger.</span>
+                  </div>
+                  <div class="setting-inputs">
+                    <input type="number" id="input-cap-auditorium" class="input-sm" value="150" min="10">
+                    <div class="input-suffix">
+                      <input type="number" id="input-thresh-auditorium" class="input-sm" value="80" min="20" max="100">
+                      <span>%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-desc">
+                    <label>Registration Area Capacity</label>
+                    <span>Strict entry gates throughput control.</span>
+                  </div>
+                  <div class="setting-inputs">
+                    <input type="number" id="input-cap-registration" class="input-sm" value="80" min="10">
+                    <div class="input-suffix">
+                      <input type="number" id="input-thresh-registration" class="input-sm" value="75" min="20" max="100">
+                      <span>%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-desc">
+                    <label>Seminar Hall Capacity</label>
+                    <span>Seating layout limitation parameters.</span>
+                  </div>
+                  <div class="setting-inputs">
+                    <input type="number" id="input-cap-seminar" class="input-sm" value="60" min="10">
+                    <div class="input-suffix">
+                      <input type="number" id="input-thresh-seminar" class="input-sm" value="85" min="20" max="100">
+                      <span>%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="setting-row">
+                  <div class="setting-desc">
+                    <label>Food Court Capacity</label>
+                    <span>Peak dining density alert configuration.</span>
+                  </div>
+                  <div class="setting-inputs">
+                    <input type="number" id="input-cap-foodcourt" class="input-sm" value="100" min="10">
+                    <div class="input-suffix">
+                      <input type="number" id="input-thresh-foodcourt" class="input-sm" value="70" min="20" max="100">
+                      <span>%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">
+                    <i data-lucide="save"></i> Save Thresholds
+                  </button>
+                  <button type="button" id="btn-reset-thresholds" class="btn btn-secondary">
+                    Reset defaults
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Server connection configuration -->
+          <div class="dashboard-panel settings-card">
+            <div class="panel-header">
+              <h3>System Settings & Server Link</h3>
+            </div>
+            <div class="panel-body">
+              <div class="setting-row">
+                <div class="setting-desc">
+                  <label>Live YOLOv8 API Server</label>
+                  <span>Link endpoint pointing to the python detection engine Flask microservice.</span>
+                </div>
+                <div class="setting-inputs-long">
+                  <input type="url" id="input-backend-url" placeholder="http://localhost:5000" value="http://localhost:5000" class="input-lg">
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-desc">
+                  <label>Data Simulation Feed Speed</label>
+                  <span>Control how fast crowd densities simulate fluctuation in standalone mode.</span>
+                </div>
+                <div class="setting-inputs">
+                  <select id="select-sim-speed" class="custom-select">
+                    <option value="slow">Steady Real-time (Slow)</option>
+                    <option value="medium" selected>Standard Flux (Medium)</option>
+                    <option value="fast">Accelerated Demo (Fast)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-desc">
+                  <label>Browser Notifications</label>
+                  <span>Permit browser notifications when crowd densities trigger critical levels.</span>
+                </div>
+                <div class="setting-inputs">
+                  <button id="btn-request-notifications" class="btn btn-secondary btn-sm">
+                    <i data-lucide="bell-ring"></i> Enable Desktop Alerts
+                  </button>
+                </div>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-desc">
+                  <label>Database Diagnostics & Reports</label>
+                  <span>Export database counts in CSV and clear memory storage logs.</span>
+                </div>
+                <div class="setting-inputs-btn">
+                  <button id="btn-export-csv" class="btn btn-secondary">
+                    <i data-lucide="download"></i> Export CSV
+                  </button>
+                  <button id="btn-clear-alerts" class="btn btn-rose-outline">
+                    <i data-lucide="trash-2"></i> Wipe Alert Log
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>&copy; 2026 EventIQ - Smart Symposium Crowd Management System. Powered by YOLOv8 Real-time Analytics.</p>
+    </div>
+  </footer>
+
+  <!-- Main JavaScript Bundle -->
+  <script src="app.js"></script>
+</body>
+</html>
